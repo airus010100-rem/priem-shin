@@ -96,7 +96,7 @@ input,textarea{width:100%;font-size:16px;padding:10px;border:1px solid #ccc;bord
   </div>
 
   <div class="card">
-    <label>Тип</label><div class="chips" data-f="type" data-opts="КГШ|Грузовая|ДСТ|Сельхоз"></div>
+    <label>Тип</label><div class="chips" data-f="type" data-opts="КГШ|Грузовые|Индустриальные|Сельхоз"></div>
     <div class="grid">
       <div><label>Размер *</label><input id="size" list="L_size" autocomplete="off"></div>
       <div><label>Протектор, мм *</label><input id="tread" inputmode="decimal" autocomplete="off"></div>
@@ -120,6 +120,8 @@ input,textarea{width:100%;font-size:16px;padding:10px;border:1px solid #ccc;bord
     <div class="codebox"><span class="muted">Код:</span><span class="code" id="code">—</span>
       <button class="chip" onclick="clearCond()">Очистить</button></div>
     <div class="muted" id="human" style="margin-top:4px"></div>
+    <label>Без износа</label>
+    <div class="chips" data-f="noiz" data-opts="-=Нет|Да=Да"></div>
     <label>Результат осмотра</label>
     <div class="chips" data-f="result" data-opts="-|Ремонт|Проверка|??? Под вопросом|Утиль (реал.)"></div>
   </div>

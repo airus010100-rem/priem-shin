@@ -1,5 +1,5 @@
 // Приём шин — приложение для телефона. Работает без интернета, выгрузка на Google Диск кнопкой.
-const VERSION = '1.0 (09.11.2026)';
+const VERSION = '1.1 (10.11.2026)';
 const $ = id => document.getElementById(id);
 
 // ---------- настройки (адрес сервера и ключ) ----------
@@ -187,7 +187,7 @@ async function uploadAll() {
   renderLocal();
 }
 const PKEYS = ['art', 'uid', 'date', 'status', 'type', 'size', 'brand', 'model', 'constr', 'ttl', 'serial', 'country',
-  'tread', 'cond', 'norepair', 'result', 'place', 'note'];
+  'tread', 'cond', 'norepair', 'noiz', 'result', 'place', 'note'];
 function payload(t) { const o = {}; PKEYS.forEach(k => o[k] = t[k] == null ? '' : t[k]); return o; }
 
 // ---------- кнопки-выбор ----------
@@ -210,7 +210,12 @@ function mkChips(box, items, multi, onClick) {
     box.appendChild(b);
   });
 }
-document.querySelectorAll('[data-f]').forEach(box => { const o = {}; box.dataset.opts.split('|').forEach(v => o[v] = v); mkChips(box, o, false); });
+// data-opts: «значение» или «значение=надпись на кнопке», через |
+document.querySelectorAll('[data-f]').forEach(box => {
+  const o = {};
+  box.dataset.opts.split('|').forEach(v => { const i = v.indexOf('='); if (i > 0) o[v.slice(0, i)] = v.slice(i + 1); else o[v] = v; });
+  mkChips(box, o, false);
+});
 function getChip(f) { const b = document.querySelector('[data-f="' + f + '"] .on'); return b ? b.dataset.v : ''; }
 function setChip(f, v) { document.querySelectorAll('[data-f="' + f + '"] .chip').forEach(b => b.classList.toggle('on', b.dataset.v === v)); }
 mkChips($('kind'), KINDS, false); mkChips($('place'), PLACES, false);
@@ -261,6 +266,7 @@ function fillForm(o) {
   FIELDS.forEach(f => $(f).value = o[f] || '');
   $('place_s').value = o.place || '';
   setChip('type', o.type); setChip('constr', o.constr); setChip('ttl', o.ttl); setChip('result', o.result || '-');
+  setChip('noiz', o.noiz === 'Да' ? 'Да' : '-');
   parseCode(o.cond); showCode(); $('ferr').textContent = '';
 }
 async function openLocal(art, isNew) {
@@ -287,7 +293,8 @@ function closeForm() { const m = cur && cur.mode; cur = null; tab(m === 'remote'
 function collect() {
   const noRep = !Object.keys(parts).length && !other.length && !extras.has('нарезка') && !extras.has('подкова');
   const o = { art: cur.art, type: getChip('type'), constr: getChip('constr'), ttl: getChip('ttl'),
-    result: getChip('result') || '-', cond: codeStr(), norepair: noRep ? 'Да' : '-', place: $('place_s').value.trim() };
+    result: getChip('result') || '-', cond: codeStr(), norepair: noRep ? 'Да' : '-', noiz: getChip('noiz') === 'Да' ? 'Да' : '-',
+    place: $('place_s').value.trim() };
   FIELDS.forEach(f => o[f] = $(f).value.trim());
   o.tread = o.tread.replace(',', '.');
   return o;
