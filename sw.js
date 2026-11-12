@@ -1,7 +1,7 @@
 // Хранит файлы приложения в телефоне, чтобы оно открывалось без интернета.
 // После правки файлов на GitHub поменяйте номер версии ниже.
-const C = 'priem-v2';
-const FILES = ['./', './index.html', './app.js', './manifest.webmanifest', './icon-192.png', './icon-512.png'];
+const C = 'priem-v3';
+const FILES = ['./', './index.html', './app.js', './manifest.webmanifest', './icon-192.png', './icon-512.png', './spravochnik.json'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(C).then(c => c.addAll(FILES)));

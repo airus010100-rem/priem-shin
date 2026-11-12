@@ -1,5 +1,5 @@
 // Приём шин — приложение для телефона. Работает без интернета, выгрузка на Google Диск кнопкой.
-const VERSION = '1.1 (10.11.2026)';
+const VERSION = '1.2 (12.11.2026)';
 const $ = id => document.getElementById(id);
 
 // ---------- настройки (адрес сервера и ключ) ----------
@@ -97,12 +97,31 @@ async function refreshBar() {
 }
 
 // ---------- списки-подсказки ----------
+// Справочник из каталога сайта (размеры, бренды, модели по брендам, страны) лежит в телефоне — работает без интернета.
+let SPR = { size: [], brand: [], country: [], models: {} };
+const sprReady = fetch('spravochnik.json').then(r => r.json()).then(j => { SPR = j; }).catch(() => {});
+let extraModels = [];
+function opts(id, arr) { $(id).innerHTML = [...new Set(arr)].filter(Boolean).sort((a, b) => a.localeCompare(b, 'ru')).map(v => '<option value="' + esc(v) + '">').join(''); }
 async function fillLists() {
+  await sprReady;
   const s = await getSess(), l = { size: [], brand: [], model: [], country: [] };
   if (s && s.lists) Object.keys(l).forEach(k => l[k] = (s.lists[k] || []).slice());
   (await idb.all('tires')).forEach(t => Object.keys(l).forEach(k => { if (t[k]) l[k].push(t[k]); }));
-  Object.keys(l).forEach(k => { $('L_' + k).innerHTML = [...new Set(l[k])].sort().map(v => '<option value="' + esc(v) + '">').join(''); });
+  opts('L_size', l.size.concat(SPR.size || []));
+  opts('L_brand', l.brand.concat(SPR.brand || []));
+  opts('L_country', l.country.concat(SPR.country || []));
+  extraModels = l.model;
+  fillModels();
 }
+// Модели: если бренд выбран — только модели этого бренда, иначе все.
+function fillModels() {
+  const b = ($('brand').value || '').trim().toLowerCase(), m = SPR.models || {};
+  const key = Object.keys(m).find(k => k.toLowerCase() === b);
+  const all = key ? m[key] : [].concat(...Object.values(m));
+  opts('L_model', all.concat(extraModels));
+}
+$('brand').addEventListener('input', fillModels);
+$('brand').addEventListener('change', fillModels);
 
 // ---------- приёмка ----------
 async function startSession() {
