@@ -1,6 +1,6 @@
 // Хранит файлы приложения в телефоне, чтобы оно открывалось без интернета.
 // После правки файлов на GitHub поменяйте номер версии ниже (priem-v6, priem-v7 …).
-const C = 'priem-v5';
+const C = 'priem-v6';
 const FILES = ['./', './index.html', './app.js', './manifest.webmanifest', './icon-192.png', './icon-512.png', './spravochnik.json'];
 
 self.addEventListener('install', e => {

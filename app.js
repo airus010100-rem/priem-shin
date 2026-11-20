@@ -1,5 +1,5 @@
 // Приём шин — приложение для телефона. Работает без интернета, выгрузка на Google Диск кнопкой.
-const VERSION = '1.4 (20.11.2026)';
+const VERSION = '1.4.1 (20.11.2026)';
 const $ = id => document.getElementById(id);
 
 // ---------- настройки (адрес сервера и ключ) ----------
@@ -554,7 +554,8 @@ async function saveBulk() {
   toast('Добавлено фото: ' + ok + (errs ? ', ошибок: ' + errs : '') + (skipped ? ', не добавлено: ' + skipped : ''));
   cancelBulk(); refreshBar();
 }
-$('bulk').onchange = e => { addBulkPhotos(e.target.files); e.target.value = ''; };
+// файлы копируются ДО очистки поля: FileList «живой» и после value='' становится пустым
+$('bulk').onchange = e => { const f = [...e.target.files]; e.target.value = ''; addBulkPhotos(f); };
 
 async function drawPics() {
   let items;
